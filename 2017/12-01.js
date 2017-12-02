@@ -1,26 +1,27 @@
-const sumCaptcha = function(string) {
+const sumCaptcha = (string) => {
 
-    const charArr = string.split('');
-
-    const numArr = charArr.map(char => Number(char));
-
-    let sum = 0;
-
-    for (let i = 0; i < numArr.length; i++) {
-
-        if (i < numArr.length - 1) {
-            if (numArr[i] === numArr[i + 1]) {
-                sum += numArr[i];
+    return string
+        .split('')
+        .map(char => Number(char))
+        .reduce((sum, currNum, i, arr) => {
+    
+            if (isLastElem(i, arr)) {
+                if (currNum === arr[0]) {
+                    sum += currNum;
+                }
             }
-        }
-        else {
-            if (numArr[i] === numArr[0]) {
-                sum += numArr[i];
+            else {
+                if (currNum === arr[i + 1]) {
+                    sum += currNum;
+                }
             }
-        }
-    }
+            return sum;
+        }, 0);
+};
 
-    return sum;
+const isLastElem = (index, array) => {
+
+    return index === array.length - 1;
 };
 
 const validation = new Map([
