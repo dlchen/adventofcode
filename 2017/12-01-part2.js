@@ -1,24 +1,17 @@
 const sumCaptcha = (string) => {
 
     const length = string.length;
-    const offset = Math.floor(string.length / 2);
+    const offset = Math.floor(length / 2);
 
-    return string
-        .split('')
-        .map(char => Number(char))
-        .reduce((sum, currNum, i, arr) => {
+    string = string + string;
 
-            let currOffset = offset;
-            const extra = i + offset - length;
-            if (extra >= 0) {
-                i = 0;
-                currOffset = extra;
-            }
-            if (currNum === arr[i + currOffset]) {
-                sum += currNum;
-            }
-            return sum;
-        }, 0);
+    let sum = 0;
+    for (let i = 0; i < length; i++) {
+        if (string[i] === string[i + offset]) {
+            sum += Number(string[i]);
+        }
+    }
+    return sum;
 };
 
 const validation = new Map([
