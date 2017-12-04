@@ -39,7 +39,7 @@ const calcChecksum = (string) => {
     return string
         .split('\n')
         .map(row => row.split('\t'))
-        .reduce((checksum, currRow, i, arr) => {
+        .reduce((checksum, currRow) => {
 
             checksum += diffCalculator(currRow);
             return checksum;
@@ -47,7 +47,7 @@ const calcChecksum = (string) => {
 };
 
 
-fs.readFile(path.resolve(__dirname, './12-02-input'), 'utf8', (err, string) => {
+fs.readFile(path.resolve(__dirname, './day02-input'), 'utf8', (err, string) => {
 
     if (err) throw err;
     console.log(calcChecksum(string));
