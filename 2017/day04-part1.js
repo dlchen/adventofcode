@@ -3,37 +3,79 @@ const path = require('path');
 const validator = require('./validator');
 
 
-const passphraseChecker = (passphrase) => {
+const passphraseCheckerGenerator = (predicate) => {
 
-    return passphrase
-        .split(' ')
-        .reduce((valid, wordA, i, words) => {
+    return (passphrase) => {
 
-            if (!valid) return false;
+        return passphrase
+            .split(' ')
+            .reduce((valid, wordA, i, words) => {
 
-            words.forEach((wordB, j) => {
+                if (!valid) return false;
 
-                if (i === j) return;
+                words.forEach((wordB, j) => {
 
-                if (wordA === wordB) {
-                    valid = false;
-                }
-            });
+                    if (i === j) return;
 
-            return valid;
-        }, true);
+                    if (predicate(wordA, wordB)) {
+                        valid = false;
+                    }
+                });
+
+                return valid;
+            }, true);
+    };
 };
 
-const validations = new Map([
+
+const validations = {};
+
+const isEqual = (wordX, wordY) => wordX === wordY;
+
+validations.part1 = new Map([
     ['aa bb cc dd ee', true],
     ['aa bb cc dd aa', false],
     ['aa bb cc dd aaa', true]
 ])
 
-validator(passphraseChecker, validations);
+validator(passphraseCheckerGenerator(isEqual), validations.part1);
 
 
-const calculateTotalValid = (string) => {
+const isAnagram = (wordX, wordY) => {
+
+    if (wordX.length !== wordY.length) return false;
+
+    const xArr = wordX.split('');
+    const yArr = wordY.split('');
+
+    let i = 0
+    while (xArr.length) {
+
+        const yPos = yArr.indexOf(xArr[i]);
+
+        if (yPos === -1) return false;
+
+        xArr.splice(i, 1);
+        yArr.splice(yPos, 1);
+    }
+
+    return true;
+};
+
+validations.part2 = new Map([
+    ['abcde fghij', true],
+    ['abcde xyz ecdab', false],
+    ['a ab abc abd abf abj', true],
+    ['iiii oiii ooii oooi oooo', true],
+    ['oiii ioii iioi iiio', false]
+]);
+
+validator(passphraseCheckerGenerator(isAnagram), validations.part2);
+
+
+const calculateTotalValid = (string, predicate) => {
+
+    const passphraseChecker = passphraseCheckerGenerator(predicate);
 
     return string
         .split('\n')
@@ -49,5 +91,6 @@ const calculateTotalValid = (string) => {
 fs.readFile(path.resolve(__dirname, './day04-input'), 'utf8', (err, string) => {
 
     if (err) throw err;
-    console.log(calculateTotalValid(string));
+    console.log(calculateTotalValid(string, isEqual));
+    console.log(calculateTotalValid(string, isAnagram));
 });
